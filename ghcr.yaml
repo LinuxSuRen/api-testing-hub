@@ -1,0 +1,21 @@
+#!api-testing
+# yaml-language-server: $schema=https://linuxsuren.github.io/api-testing/api-testing-schema.json
+name: ghcr
+api: https://ghcr.io/
+items:
+    - name: token
+      request:
+        api: /token
+        method: GET
+        query:
+            scope: repository:linuxsuren/api-testing:pull
+      expect:
+        statusCode: 200
+    - name: listTags
+      request:
+        api: /v2/linuxsuren/api-testing/tags/list
+        method: GET
+        header:
+            Authorization: Bearer {{.token.token}}
+      expect:
+        statusCode: 200

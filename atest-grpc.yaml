@@ -1,0 +1,19 @@
+#!api-testing
+# yaml-language-server: $schema=https://linuxsuren.github.io/api-testing/api-testing-schema.json
+api: localhost:7070
+items:
+- expect: {}
+  name: GetSuites
+  request:
+    api: /server.Runner/GetSuites
+    method: GET
+- expect: {}
+  name: GetStores
+  request:
+    api: /server.Runner/GetStores
+    method: GET
+name: atest-grpc
+spec:
+  kind: gRPC
+  rpc:
+    serverReflection: true

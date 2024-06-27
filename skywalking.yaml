@@ -1,0 +1,33 @@
+#!api-testing
+# yaml-language-server: $schema=https://linuxsuren.github.io/api-testing/api-testing-schema.json
+api: 172.11.0.6:31176
+items:
+- expect:
+    statusCode: 200
+  name: collect
+  request:
+    api: /skywalking.v3.LogReportService/collect
+    body: |-
+      {
+          "service": "atest",
+          "timestamp": {{now.UnixMilli}},
+          "serviceInstance": "instance",
+          "endpoint": "endpoint",
+          "tags": {
+             "data": [{"key": "key", "value": "value"}]
+           },
+          "body": {
+              "type": "TEXT",
+              "text": {
+                  "text": "{{randAlpha 400}}"
+              }
+          }
+      }
+    method: GET
+name: SkyWalking
+spec:
+  kind: gRPC
+  rpc:
+    import:
+    - skywalking-data-collect-protocol-9.6.0
+    protofile: https://ghproxy.com/https://github.com/apache/skywalking-data-collect-protocol/archive/refs/tags/v9.6.0.zip?file=logging/Logging.proto

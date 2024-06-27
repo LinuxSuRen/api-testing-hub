@@ -1,0 +1,91 @@
+#!api-testing
+# yaml-language-server: $schema=https://linuxsuren.github.io/api-testing/api-testing-schema.json
+api: http://localhost:8080/server.Runner
+items:
+- expect:
+    statusCode: 200
+  name: GetTestSuites
+  request:
+    api: /GetSuites
+    method: POST
+    query:
+      name: rick
+- expect:
+    statusCode: 200
+  name: GetStores
+  request:
+    api: /GetStores
+    method: POST
+- expect: {}
+  name: PopularHeaders
+  request:
+    api: /PopularHeaders
+    method: POST
+- expect: {}
+  name: getVersion
+  request:
+    api: /GetVersion
+    method: POST
+- expect:
+    statusCode: 200
+  name: createSuite
+  request:
+    api: /CreateTestSuite
+    body: |-
+      {
+          "name": "{{.param.suiteName}}",
+          "api": "",
+          "kind": "HTTP"
+      }
+    method: POST
+- expect:
+    statusCode: 200
+  name: createTestCase
+  request:
+    api: /CreateTestCase
+    body: |-
+      {
+          "suiteName": "{{.param.suiteName}}",
+          "data": {
+              "name": "{{.param.caseName}}",
+              "request": {
+                  "api": "/GetTestSuites",
+                  "method": "POST"
+              }
+          }
+      }
+    method: POST
+- expect:
+    statusCode: 200
+  name: updateTestCase
+  request:
+    api: /UpdateTestCase
+    body: |-
+      {
+          "suiteName": "{{.param.suiteName}}",
+          "data": {
+              "name": "{{.param.caseName}}",
+              "suiteName": "",
+              "request": {
+                  "api": "/GetTestSuites",
+                  "method": "POST",
+                  "header": [
+                      {
+                          "key": "xx",
+                          "value": "xx"
+                      }
+                  ]
+              }
+          }
+      }
+    method: POST
+- expect: {}
+  name: deleteSuite
+  request:
+    api: /DeleteSuite
+    method: POST
+name: atest-git
+param:
+  caseName: '{{randAlpha 6}}'
+  suiteName: '{{randAlpha 6}}'
+spec: {}

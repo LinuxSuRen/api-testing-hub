@@ -1,0 +1,133 @@
+#!api-testing
+# yaml-language-server: $schema=https://linuxsuren.github.io/api-testing/api-testing-schema.json
+api: http://10.121.218.184:30636/api
+items:
+- expect:
+    statusCode: 200
+  name: experiments
+  request:
+    api: /experiments
+    method: GET
+- expect: {}
+  name: schedules
+  request:
+    api: /schedules
+    method: GET
+- expect: {}
+  name: workflows
+  request:
+    api: /workflows
+    method: GET
+- expect:
+    statusCode: 200
+  name: pods
+  request:
+    api: /common/pods
+    body: |-
+      {
+          "namespaces": [
+              "default"
+          ],
+          "labelSelectors": {},
+          "annotationSelectors": {}
+      }
+    header:
+      Content-Type: application/json
+    method: POST
+- expect:
+    statusCode: 200
+  name: createExperiments
+  request:
+    api: /experiments
+    body: |-
+      {
+          "apiVersion": "chaos-mesh.org/v1alpha1",
+          "kind": "PodChaos",
+          "metadata": {
+              "name": "{{randomKubernetesName}}",
+              "namespace": "default"
+          },
+          "spec": {
+              "selector": {
+                  "namespaces": [
+                      "default"
+                  ]
+              },
+              "mode": "one",
+              "duration": "1m",
+              "action": "pod-kill"
+          }
+      }
+    header:
+      Content-Type: application/json
+    method: POST
+- expect:
+    statusCode: 200
+  name: createExperimentsHTTPAbort
+  request:
+    api: /experiments
+    body: |-
+      {
+          "apiVersion": "chaos-mesh.org/v1alpha1",
+          "kind": "HTTPChaos",
+          "metadata": {
+              "name": "{{randomKubernetesName}}",
+              "namespace": "default"
+          },
+          "spec": {
+              "selector": {
+                  "namespaces": [
+                      "default"
+                  ]
+              },
+              "mode": "all",
+              "duration": "30s",
+              "abort": true,
+              "target": "Request",
+              "port": 8080,
+              "path": "*",
+              "method": "GET",
+              "action": "request-abort"
+          }
+      }
+    header:
+      Content-Type: application/json
+    method: POST
+- expect:
+    statusCode: 200
+  name: createShedules
+  request:
+    api: /schedules
+    body: |-
+      {
+          "apiVersion": "chaos-mesh.org/v1alpha1",
+          "kind": "Schedule",
+          "metadata": {
+              "name": "{{randomKubernetesName}}",
+              "namespace": "default"
+          },
+          "spec": {
+              "schedule": "* * * * *",
+              "historyLimit": 1,
+              "concurrencyPolicy": "Forbid",
+              "type": "PodChaos",
+              "podChaos": {
+                  "selector": {
+                      "namespaces": [
+                          "default"
+                      ]
+                  },
+                  "mode": "one",
+                  "action": "pod-kill"
+              }
+          }
+      }
+    header:
+      Content-Type: application/json
+    method: POST
+name: chaos-mesh
+param:
+  "": ""
+spec:
+  kind: swagger
+  url: http://192.168.123.170:30478/api/swagger/apidoc.json

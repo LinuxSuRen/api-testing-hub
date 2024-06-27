@@ -1,0 +1,96 @@
+#!api-testing
+# yaml-language-server: $schema=https://linuxsuren.github.io/api-testing/api-testing-schema.json
+api: http://172.11.0.6:32130/
+items:
+- expect:
+    statusCode: 200
+  name: createJob
+  request:
+    api: /view/all/createItem
+    form:
+      from: ""
+      json: '{"name":"good"}'
+      mode: hudson.model.FreeStyleProject
+      name: '{{randAlpha 4}}'
+    header:
+      Authorization: '{{.param.auth}}'
+      Content-Type: application/x-www-form-urlencoded
+      Jenkins-Crumb: '{{.crumbIssuer.crumb}}'
+    method: POST
+- expect:
+    statusCode: 200
+  name: crumbIssuer
+  request:
+    api: /crumbIssuer/api/json
+    header:
+      Authorization: '{{.param.auth}}'
+    method: GET
+- expect:
+    statusCode: 200
+  name: rootInfo
+  request:
+    api: /api/json
+    header:
+      Authorization: '{{.param.auth}}'
+      Jenkins-Crumb: '{{.crumbIssuer.crumb}}'
+    method: GET
+- expect:
+    statusCode: 201
+  name: buildFirst
+  request:
+    api: /job/{{(index .rootInfo.jobs 0).name}}/build
+    header:
+      Authorization: '{{.param.auth}}'
+      Jenkins-Crumb: '{{.crumbIssuer.crumb}}'
+    method: POST
+- expect:
+    statusCode: 200
+  name: deleteJob
+  request:
+    api: /job/{{(index .rootInfo.jobs 0).name}}/doDelete
+    header:
+      Authorization: '{{.param.auth}}'
+      Content-Type: application/x-www-form-urlencoded
+      Jenkins-Crumb: '{{.crumbIssuer.crumb}}'
+    method: POST
+- expect:
+    statusCode: 200
+  name: pluginList
+  request:
+    api: /pluginManager/api/json?depth=2
+    header:
+      Authorization: '{{.param.auth}}'
+      Jenkins-Crumb: '{{.crumbIssuer.crumb}}'
+    method: GET
+- expect:
+    statusCode: 200
+  name: availablePlugins
+  request:
+    api: /pluginManager/plugins
+    header:
+      Authorization: '{{.param.auth}}'
+      Jenkins-Crumb: '{{.crumbIssuer.crumb}}'
+    method: GET
+- expect:
+    statusCode: 200
+  name: jobQueue
+  request:
+    api: /queue/api/json
+    header:
+      Authorization: '{{.param.auth}}'
+      Jenkins-Crumb: '{{.crumbIssuer.crumb}}'
+    method: GET
+- expect:
+    statusCode: 200
+  name: agentList
+  request:
+    api: /computer/api/json
+    header:
+      Authorization: '{{.param.auth}}'
+      Jenkins-Crumb: '{{.crumbIssuer.crumb}}'
+    method: GET
+name: jenkins
+param:
+  "": ""
+  auth: Basic {{base64 "admin:11f75fb18e0e07aab80f881181b883ec02"}}
+spec: {}

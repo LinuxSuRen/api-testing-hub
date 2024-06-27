@@ -1,0 +1,49 @@
+name: one-api
+api: http://172.11.0.6:31448/
+items:
+  - name: login
+    request:
+      api: /api/user/login
+      method: POST
+      body: |-
+        {
+          "username": "root",
+          "password": "123456"
+        }
+    expect:
+      statusCode: 200
+  - name: chat
+    request:
+      api: /v1/chat/completions
+      method: POST
+      header:
+        Authorization: Bearer sk-g2kZSrUvd1CFL1fTE20eF552A2Af4b189f075cB02b8122Ab
+        Content-Type: application/json
+      body: |-
+        {
+          "messages": [
+              {
+                "content": "https://github.com/linuxsuren/api-testing",
+                "role": "user"
+              }
+          ],
+          "model": ""
+        }
+    expect:
+      statusCode: 200
+  - name: listModels
+    request:
+      api: /api/channel/models
+      method: GET
+      header:
+        Authorization: Bearer dd3487fbe040463182d01240f1fb41ec
+    expect:
+      statusCode: 200
+  - name: channels
+    request:
+      api: /api/channel
+      method: GET
+      header:
+        Authorization: Bearer dd3487fbe040463182d01240f1fb41ec
+    expect:
+      statusCode: 200

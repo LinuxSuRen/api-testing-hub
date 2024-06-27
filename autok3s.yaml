@@ -1,0 +1,65 @@
+#!api-testing
+# yaml-language-server: $schema=https://linuxsuren.github.io/api-testing/api-testing-schema.json
+api: http://172.11.0.6:31792/v1
+items:
+- expect:
+    statusCode: 200
+  name: clusters
+  request:
+    api: /clusters
+    method: GET
+- expect:
+    statusCode: 200
+  name: deleteCluster
+  request:
+    api: /clusters/{{(index .clusters.data 0).id}}
+    method: DELETE
+- expect:
+    statusCode: 201
+  name: createCluster
+  request:
+    api: /clusters
+    body: |-
+      {
+          "datastore-cafile-content": "",
+          "datastore-certfile-content": "",
+          "datastore-keyfile-content": "",
+          "master": "1",
+          "master-extra-args": "",
+          "masters-memory": "",
+          "name": "{{randAlpha 4}}",
+          "network": "",
+          "registry": "",
+          "registry-content": "",
+          "token": "",
+          "worker": "0",
+          "worker-extra-args": "",
+          "workers-memory": "",
+          "rollback": true,
+          "provider": "k3d",
+          "options": {
+              "api-port": "0.0.0.0:0",
+              "envs": null,
+              "gpus": "",
+              "image": "docker.io/rancher/k3s:v1.27.6-k3s1",
+              "labels": null,
+              "masters-memory": "",
+              "no-image-volume": false,
+              "no-lb": false,
+              "ports": null,
+              "volumes": null,
+              "workers-memory": ""
+          }
+      }
+    method: POST
+- expect:
+    statusCode: 200
+  name: getCluster
+  request:
+    api: /clusters/{{(index .clusters.data 0).id}}?link=nodes
+    method: GET
+name: autok3s
+param:
+  server: http://172.11.0.6:31792
+spec:
+  kind: HTTP

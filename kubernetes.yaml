@@ -1,0 +1,134 @@
+#!api-testing
+# yaml-language-server: $schema=https://linuxsuren.github.io/api-testing/api-testing-schema.json
+api: https://192.168.123.121:6443
+items:
+- expect:
+    statusCode: 200
+    verify:
+    - data.kind == "PodList"
+  name: pods
+  request:
+    api: /api/v1/namespaces/kube-system/pods
+    header:
+      Authorization: Bearer {{.param.token}}
+    method: GET
+- expect:
+    statusCode: 201
+  name: create-configmap
+  request:
+    api: /api/v1/namespaces/default/configmaps
+    body: |
+      {
+        "apiVersion": "v1",
+        "kind": "ConfigMap",
+        "metadata": {
+          "name": "config",
+          "namespace": "default",
+          "labels": {
+            "key": "{{randomKubernetesName}}"
+          }
+        },
+        "data": {
+          "key": "value"
+        }
+      }
+    header:
+      Authorization: Bearer {{.param.token}}
+      Content-Type: application/json
+    method: POST
+- expect: {}
+  name: update-configmap
+  request:
+    api: /api/v1/namespaces/default/configmaps/config
+    body: |
+      {
+        "apiVersion": "v1",
+        "kind": "ConfigMap",
+        "metadata": {
+          "name": "config",
+          "namespace": "default"
+        },
+        "data": {
+          "key": "new value"
+        }
+      }
+    header:
+      Authorization: Bearer {{env "K8S_TOKEN"}}
+    method: PUT
+- expect:
+    bodyFieldsExpect:
+      data/key: new value
+    statusCode: 200
+  name: get-configmap
+  request:
+    api: /api/v1/namespaces/default/configmaps/config
+    body: |
+      {
+        "apiVersion": "v1",
+        "kind": "ConfigMap",
+        "metadata": {
+          "name": "config",
+          "namespace": "default"
+        },
+        "data": {
+          "key": "new value"
+        }
+      }
+    header:
+      Authorization: Bearer {{.param.token}}
+    method: PUT
+- expect:
+    statusCode: 200
+  name: delete-configmap
+  request:
+    api: /api/v1/namespaces/default/configmaps/config
+    header:
+      Authorization: Bearer {{.param.token}}
+    method: DELETE
+- expect:
+    statusCode: 201
+  name: eviction
+  request:
+    api: /api/v1/namespaces/default/pods/pr-al-cloud-lwso0-image-266169478/eviction
+    body: |-
+      {
+          "apiVersion": "policy/v1",
+          "kind": "Eviction",
+          "metadata": {
+              "name": "pr-al-cloud-lwso0-image-266169478",
+              "namespace": "default"
+          }
+      }
+    header:
+      Authorization: Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6InZFREtQbk1DUEk1WEc3UnJBUEhMMlYxbGFiMVM3aXBPaUlhdkVxUTJ5RUEifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJhbC1jb21wb25lbnQtc3lzdGVtIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZWNyZXQubmFtZSI6ImFsLWNvbXBvbmVudC1hbC1jbG91ZC1hZG1pbi10b2tlbi1mZHR6eCIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50Lm5hbWUiOiJhbC1jb21wb25lbnQtYWwtY2xvdWQtYWRtaW4iLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC51aWQiOiJkY2E2Nzk2MS03MTVlLTQ0NzEtOTZmMy1kNTViZmNkYWY5ZmEiLCJzdWIiOiJzeXN0ZW06c2VydmljZWFjY291bnQ6YWwtY29tcG9uZW50LXN5c3RlbTphbC1jb21wb25lbnQtYWwtY2xvdWQtYWRtaW4ifQ.Sp50XWDo4AGBoJO4AASmKJi3rLkBy_Qhr5w_9T8udUVoKs3mxl66IqOpT2d8xT9JhffzCpoT_8i_RU2WayevYFslY932owB1_udaEUTuTvbTtWf-aHWLERgYrtC_BhHUkXqQ6cTHUmJx2pr_MNOgK1OykHkNtIJLYRnb3tmDCozx4-uUMQY89GANtNMBiO7vGR-dlgnmP6q7WG3OOGDdiVoNnMnNWJJ2rIi65FtcnicB8JTJHDwrLT9IONKwMk5RQ1PvGmy0XhGS-I7Nb1uBUzaOVQ4WDC05B1A7DJWT0Zi5Stb7kRiOzXbAegidY2is0OgtQKmSIg29uSIheBSRDA
+    method: POST
+- expect:
+    statusCode: 200
+  name: priorityClass
+  request:
+    api: /apis/scheduling.k8s.io/v1/priorityclasses
+    header:
+      Authorization: Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6InZFREtQbk1DUEk1WEc3UnJBUEhMMlYxbGFiMVM3aXBPaUlhdkVxUTJ5RUEifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJhbC1jb21wb25lbnQtc3lzdGVtIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZWNyZXQubmFtZSI6ImFsLWNvbXBvbmVudC1hbC1jbG91ZC1hZG1pbi10b2tlbi1mZHR6eCIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50Lm5hbWUiOiJhbC1jb21wb25lbnQtYWwtY2xvdWQtYWRtaW4iLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC51aWQiOiJkY2E2Nzk2MS03MTVlLTQ0NzEtOTZmMy1kNTViZmNkYWY5ZmEiLCJzdWIiOiJzeXN0ZW06c2VydmljZWFjY291bnQ6YWwtY29tcG9uZW50LXN5c3RlbTphbC1jb21wb25lbnQtYWwtY2xvdWQtYWRtaW4ifQ.Sp50XWDo4AGBoJO4AASmKJi3rLkBy_Qhr5w_9T8udUVoKs3mxl66IqOpT2d8xT9JhffzCpoT_8i_RU2WayevYFslY932owB1_udaEUTuTvbTtWf-aHWLERgYrtC_BhHUkXqQ6cTHUmJx2pr_MNOgK1OykHkNtIJLYRnb3tmDCozx4-uUMQY89GANtNMBiO7vGR-dlgnmP6q7WG3OOGDdiVoNnMnNWJJ2rIi65FtcnicB8JTJHDwrLT9IONKwMk5RQ1PvGmy0XhGS-I7Nb1uBUzaOVQ4WDC05B1A7DJWT0Zi5Stb7kRiOzXbAegidY2is0OgtQKmSIg29uSIheBSRDA
+    method: GET
+- expect:
+    statusCode: 200
+  name: versionList
+  request:
+    api: /api/v1
+    header:
+      Authorization: Bearer {{.param.token}}
+    method: GET
+- expect:
+    statusCode: 200
+  name: apidiscovery
+  request:
+    api: /apis
+    header:
+      Authorization: Bearer {{.param.token}}
+    method: GET
+name: Kubernetes
+param:
+  "": ""
+  ip: 192.168.123.121
+  token: eyJhbGciOiJSUzI1NiIsImtpZCI6Il9zTmhqWDI0aUZadURCWkpCeUhuLUl2S1pYMjczZWJVdFh5M0lwVzkwTzgifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJjbHVzdGVyLWFkbWluLXRva2VuLWg5NTZjIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQubmFtZSI6ImNsdXN0ZXItYWRtaW4iLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC51aWQiOiIyZGQ0NzcyNy0wNDEyLTQyYzYtOTg0NC05OWFiM2JlMDkzMDEiLCJzdWIiOiJzeXN0ZW06c2VydmljZWFjY291bnQ6a3ViZS1zeXN0ZW06Y2x1c3Rlci1hZG1pbiJ9.fp7kcr2Tgg7O01C0rCs1YEUGynBHKflKnN0K94hTAtelP9CDwTRMj2Y3rHXrvVisjPMXQ_qJtUb9cLL_QXtihgWIQkGZJYD6uQeatWPqRfAE26BZA-bc3Y4RvuTjgWkwR3PNhfoCDiWx-Y0OkLONG90n40f-1Bq_B5zsf_yVHukeUln8UCL0o8Bi7k2TQXycUOToI_BRC1-q7bkME8-WUFMdbbjKkJzW5FHQg1Y4OL2Dd5_Bv24sT6-P5k8DV8btYYUbvpeYMIP_Vzg8T5N9G4TULPGb41KJ1dm66JNNFFjGB7bqOdC7RR32xrB2mNYodP8tDSyeR_as1BxyQoXkZg
+spec: {}

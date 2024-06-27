@@ -1,0 +1,14 @@
+#!api-testing
+# yaml-language-server: $schema=https://linuxsuren.github.io/api-testing/api-testing-schema.json
+api: https://www.googleapis.com/youtube/v3
+items:
+- expect:
+    statusCode: 200
+  name: channels
+  request:
+    api: /channels
+    header:
+      Authorization: Bearer AIzaSyCYLCdttC0iIFEmMcwOeur3ObWZm_Y0H_Y
+    method: GET
+name: youtube
+spec: {}

@@ -1,0 +1,32 @@
+#!api-testing
+# yaml-language-server: $schema=https://linuxsuren.github.io/api-testing/api-testing-schema.json
+api: ' https://api.github.com'
+items:
+- expect:
+    statusCode: 201
+  name: createIssueComment
+  request:
+    api: /repos/{{.param.owner}}/{{.param.repo}}/issues/{{.param.issue}}/comments
+    body: |-
+      {
+          "body": "hello from api-testing"
+      }
+    header:
+      Authorization: Bearer {{.param.token}}
+    method: POST
+- expect:
+    statusCode: 200
+  name: listIssueComment
+  request:
+    api: /repos/{{.param.owner}}/{{.param.repo}}/issues/{{.param.issue}}/comments
+    header:
+      Authorization: Bearer {{.param.token}}
+    method: GET
+name: github
+param:
+  issue: "1"
+  owner: linuxsuren
+  repo: test
+  token: need-to-change
+spec:
+  kind: HTTP

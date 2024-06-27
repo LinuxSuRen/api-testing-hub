@@ -1,0 +1,46 @@
+#!api-testing
+# yaml-language-server: $schema=https://linuxsuren.github.io/api-testing/api-testing-schema.json
+api: https://wenxin.baidu.com/moduleApi/portal/api
+items:
+- expect:
+    statusCode: 200
+  name: token
+  request:
+    api: /oauth/token
+    form:
+      client_id: '{{secretValue "wenxin.client_id"}}'
+      client_secret: '{{secretValue "wenxin.client_secret"}}'
+      grant_type: client_credentials
+    header:
+      Content-Type: application/x-www-form-urlencoded
+    method: POST
+- expect:
+    statusCode: 200
+  name: zeus
+  request:
+    api: /rest/1.0/ernie/3.0.25/zeus?access_token={{.token.data}}&text=when
+    form:
+      async: "1"
+      is_unidirectional: "0"
+      mask_type: word
+      min_dec_len: "2"
+      min_dec_penalty_text: 。?：！[<S>]
+      penalty_score: "1.2"
+      seq_len: "512"
+      task_prompt: qa
+      text: when
+      topp: "0.8"
+      typeId: "1"
+    header:
+      Content-Type: application/x-www-form-urlencoded
+    method: POST
+- expect:
+    statusCode: 200
+  name: getResult
+  request:
+    api: /rest/1.0/ernie/v1/getResult?access_token={{.token.data}}&taskId={{.zeus.data.taskId}}
+    method: GET
+name: wenxin
+param:
+  "": ""
+spec: {}

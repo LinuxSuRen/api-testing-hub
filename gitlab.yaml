@@ -1,0 +1,15 @@
+#!api-testing
+# yaml-language-server: $schema=https://linuxsuren.github.io/api-testing/api-testing-schema.json
+api: https://gitlab.com/api/v4
+items:
+- expect:
+    statusCode: 200
+  name: get_pr
+  request:
+    api: /projects/comprasnet%2Fcontratos/merge_requests/{{.param.pr}}
+    method: GET
+name: gitlab
+param:
+  "": ""
+  pr: "784"
+spec: {}

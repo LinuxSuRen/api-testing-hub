@@ -1,0 +1,42 @@
+#!api-testing
+# yaml-language-server: $schema=https://linuxsuren.github.io/api-testing/api-testing-schema.json
+api: https://index.docker.io/v2
+items:
+- expect:
+    statusCode: 401
+  name: checkVersion
+  request:
+    api: /
+    method: GET
+- expect:
+    statusCode: 200
+  name: listTags
+  request:
+    api: /linuxsuren/api-testing/tags/list
+    header:
+      Accept: application/vnd.docker.distribution.manifest.v2+json
+      Authorization: Bearer {{.authToken.token}}
+    method: GET
+    query:
+      "n": "3"
+- expect:
+    statusCode: 200
+  name: authToken
+  request:
+    api: https://auth.docker.io/token
+    method: GET
+    query:
+      scope: repository:linuxsuren/api-testing:pull
+      service: registry.docker.io
+- expect:
+    statusCode: 200
+  name: manifest
+  request:
+    api: /linuxsuren/api-testing/manifests/master
+    header:
+      Authorization: Bearer {{.authToken.token}}
+    method: GET
+name: dockerhubRegistry
+param:
+  token: input-me
+spec: {}

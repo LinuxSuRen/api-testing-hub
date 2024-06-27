@@ -1,0 +1,31 @@
+#!api-testing
+# yaml-language-server: $schema=https://linuxsuren.github.io/api-testing/api-testing-schema.json
+api: http://10.121.218.184:31046/api/v1
+items:
+- expect:
+    statusCode: 200
+  name: query
+  request:
+    api: /query?query=workqueue_work_duration_seconds_count
+    method: GET
+    query:
+      query: prometheus
+      time: "2015-07-01T20:10:51.781Z"
+- expect:
+    statusCode: 204
+  name: delete_series
+  request:
+    api: /admin/tsdb/delete_series?match[]=argo_workflows_successed_count{templatename="awesome-dragon"}
+    method: PUT
+    query:
+      match[]: argo_workflows_failed_count
+- expect:
+    statusCode: 204
+  name: clean_tombstones
+  request:
+    api: /admin/tsdb/clean_tombstones
+    method: PUT
+name: prometheus
+param:
+  "": ""
+spec: {}

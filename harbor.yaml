@@ -1,0 +1,157 @@
+#!api-testing
+# yaml-language-server: $schema=https://linuxsuren.github.io/api-testing/api-testing-schema.json
+api: http://172.11.0.6:30002/api/v2.0
+items:
+- expect:
+    statusCode: 200
+  name: projects
+  request:
+    api: /projects
+    header:
+      Authorization: '{{.param.auth}}'
+    method: GET
+- expect:
+    statusCode: 201
+  name: createProject
+  request:
+    api: /projects
+    body: |-
+      {
+          "project_name": "rand{{lower (randAlpha 4)}}",
+          "metadata": {
+              "public": "true"
+          },
+          "storage_limit": -1,
+          "registry_id": {{(index .registries 0).id}}
+      }
+    header:
+      Authorization: '{{.param.auth}}'
+      Content-Type: application/json
+    method: POST
+- expect:
+    statusCode: 201
+  name: createPolicy
+  request:
+    api: /replication/policies
+    body: |-
+      {
+          "name": "{{.param.policy}}",
+          "description": "",
+          "src_registry": {
+              "creation_time": "2023-10-08T06:40:13.236Z",
+              "credential": {},
+              "id": 6,
+              "name": "temporary",
+              "status": "healthy",
+              "type": "docker-registry",
+              "update_time": "2023-10-08T06:40:13.236Z",
+              "url": "http://10.121.218.185:5000"
+          },
+          "dest_registry": null,
+          "dest_namespace": "al-cloud",
+          "dest_namespace_replace_count": 1,
+          "trigger": {
+              "type": "manual",
+              "trigger_settings": {
+                  "cron": ""
+              }
+          },
+          "enabled": true,
+          "deletion": false,
+          "override": true,
+          "speed": -1,
+          "filters": [
+              {
+                  "type": "name",
+                  "value": "al-cloud/{{.param.policy}}"
+              },
+              {
+                  "type": "tag",
+                  "decoration": "matches",
+                  "value": "**"
+              }
+          ]
+      }
+    header:
+      Authorization: '{{.param.auth}}'
+      Content-Type: application/json
+    method: POST
+- expect:
+    statusCode: 201
+  name: policyExecution
+  request:
+    api: /replication/executions
+    body: |-
+      {
+          "policy_id": {{(index .policies 0).id}}
+      }
+    header:
+      Authorization: '{{.param.auth}}'
+      Content-Type: application/json
+    method: POST
+- expect:
+    statusCode: 200
+  name: policies
+  request:
+    api: /replication/policies
+    header:
+      Authorization: '{{.param.auth}}'
+    method: GET
+- expect:
+    statusCode: 200
+  name: registries
+  request:
+    api: /registries
+    header:
+      Authorization: '{{.param.auth}}'
+    method: GET
+- expect:
+    statusCode: 201
+  name: createRegistry
+  request:
+    api: /registries
+    body: |-
+      {
+          "credential": {
+              "access_key": "",
+              "access_secret": "",
+              "type": "basic"
+          },
+          "description": "",
+          "insecure": false,
+          "name": "{{randAlpha 4}}",
+          "type": "docker-registry",
+          "url": "{{.param.registry}}"
+      }
+    header:
+      Authorization: '{{.param.auth}}'
+      Content-Type: application/json
+    method: POST
+- expect:
+    statusCode: 200
+  name: pingRegistry
+  request:
+    api: /registries/ping
+    body: |-
+      {
+          "access_key": "",
+          "access_secret": "",
+          "description": "",
+          "insecure": false,
+          "name": "ghcr.io",
+          "type": "docker-registry",
+          "url": "https://ghcr.io"
+      }
+    header:
+      Authorization: '{{.param.auth}}'
+      Content-Type: application/json
+    method: POST
+name: harbor
+param:
+  "": ""
+  auth: ' Basic {{base64 "admin:Harbor12345"}}'
+  policy: manifest
+  registry: https://ghcr.io
+spec:
+  kind: swagger
+  url: ' http://172.11.0.6:30002/swagger2.json'

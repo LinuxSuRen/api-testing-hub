@@ -1,0 +1,67 @@
+#!api-testing
+# yaml-language-server: $schema=https://linuxsuren.github.io/api-testing/api-testing-schema.json
+api: http://10.121.218.184:31589/
+items:
+- expect:
+    statusCode: 200
+  name: login
+  request:
+    api: /login
+    body: |-
+      {
+          "user": "admin",
+          "password": "admin"
+      }
+    header:
+      Content-Type: application/json
+    method: POST
+- expect:
+    statusCode: 200
+  name: query
+  request:
+    api: /api/ds/query
+    method: POST
+- expect:
+    statusCode: 200
+  name: home
+  request:
+    api: /api/dashboards/home
+    header:
+      Authorization: Bearer eyJrIjoiUTFrMTlSYWc5bHZEUG1LR1diTkxaV2Y3bmdOMmZIRkMiLCJuIjoiZGQiLCJpZCI6MX0=
+    method: GET
+- expect:
+    statusCode: 200
+  name: settings
+  request:
+    api: /api/admin/settings
+    header:
+      Authorization: Bearer eyJrIjoid1RWeVFWRDVnTUhGMHJWUzF2cjNiVG9lWENFMk9TWDMiLCJuIjoic3NzIiwiaWQiOjF9
+    method: GET
+- expect:
+    statusCode: 200
+  name: keys
+  request:
+    api: /api/auth/keys?includeExpired=false
+    header:
+      Authorization: Bearer eyJrIjoid1RWeVFWRDVnTUhGMHJWUzF2cjNiVG9lWENFMk9TWDMiLCJuIjoic3NzIiwiaWQiOjF9
+    method: GET
+- expect:
+    statusCode: 200
+  name: users
+  request:
+    api: /api/org/users
+    header:
+      Authorization: Bearer eyJrIjoid1RWeVFWRDVnTUhGMHJWUzF2cjNiVG9lWENFMk9TWDMiLCJuIjoic3NzIiwiaWQiOjF9
+    method: GET
+- expect:
+    statusCode: 200
+  name: datasources
+  request:
+    api: /api/datasources
+    header:
+      Authorization: Bearer eyJrIjoid1RWeVFWRDVnTUhGMHJWUzF2cjNiVG9lWENFMk9TWDMiLCJuIjoic3NzIiwiaWQiOjF9
+    method: GET
+name: grafana
+param:
+  "": ""
+spec: {}

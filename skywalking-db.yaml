@@ -1,0 +1,64 @@
+#!api-testing
+# yaml-language-server: $schema=https://linuxsuren.github.io/api-testing/api-testing-schema.json
+api: 192.168.1.98:17912
+items:
+- expect:
+    statusCode: 200
+  name: create
+  request:
+    api: /banyandb.database.v1.GroupRegistryService/Create
+    body: |-
+      {
+          "group": {
+              "catalog": "{{randEnum "CATALOG_UNSPECIFIED" "CATALOG_STREAM" "CATALOG_MEASURE"}}",
+              "metadata": {
+                  "createRevision": 98,
+                  "group": "{{randAlpha 4}}",
+                  "id": 50,
+                  "modRevision": 9,
+                  "name": "{{randAlpha 4}}"
+              },
+              "resourceOpts": {
+                  "blockInterval": {
+                      "num": 6,
+                      "unit": 2
+                  },
+                  "segmentInterval": {
+                      "num": 27,
+                      "unit": 2
+                  },
+                  "shardNum": 48,
+                  "ttl": {
+                      "num": 83,
+                      "unit": 2
+                  }
+              }
+          }
+      }
+    method: GET
+- expect:
+    statusCode: 200
+  name: list
+  request:
+    api: /banyandb.database.v1.GroupRegistryService/List
+    body: '{}'
+    method: GET
+- expect:
+    statusCode: 200
+  name: delete
+  request:
+    api: /banyandb.database.v1.GroupRegistryService/Delete
+    body: |-
+      {
+          "group": "{{.param.groupName}}"
+      }
+    method: GET
+name: skywalking-db
+param:
+  groupName: xxx
+spec:
+  kind: gRPC
+  rpc:
+    import:
+    - .
+    protofile: https://gitee.com/linuxsuren/api-testing-hub/releases/download/v0.0.1/skywalking-banyandb.zip?file=banyandb/database/v1/rpc.proto

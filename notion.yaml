@@ -1,0 +1,27 @@
+#!api-testing
+# yaml-language-server: $schema=https://linuxsuren.github.io/api-testing/api-testing-schema.json
+api: https://api.notion.com
+items:
+- expect:
+    statusCode: 200
+  name: users
+  request:
+    api: /v1/users
+    header:
+      Authorization: Bearer secret_me6f6yU9EYHjaeRl3tiAEeS0ASE2ATElkrferOdzTN0
+      Notion-Version: '{{.param.version}}'
+    method: GET
+- expect:
+    statusCode: 200
+  name: databases
+  request:
+    api: /v1/databases/85d525c9-062f-421c-ad19-93b2df951d1e
+    header:
+      Authorization: Bearer secret_me6f6yU9EYHjaeRl3tiAEeS0ASE2ATElkrferOdzTN0
+      Notion-Version: '{{.param.version}}'
+    method: GET
+name: notion
+param:
+  "": ""
+  version: "2022-06-28"
+spec: {}

@@ -1,0 +1,89 @@
+#!api-testing
+# yaml-language-server: $schema=https://linuxsuren.github.io/api-testing/api-testing-schema.json
+api: https://api-kszvjfat.c.kubesphere.cloud:30443/
+items:
+- expect:
+    statusCode: 200
+  name: login
+  request:
+    api: /oauth/token
+    body: |-
+      {
+          "grant_type": "password",
+          "username": "admin",
+          "password": "P@88w0rd"
+      }
+    form:
+      client_id: kubesphere
+      client_secret: kubesphere
+      grant_type: password
+      password: '{{secretValue "ks.pass"}}'
+      username: admin
+    header:
+      Content-Type: application/x-www-form-urlencoded
+    method: POST
+- expect:
+    statusCode: 200
+  name: clusterroles
+  request:
+    api: /kapis/iam.kubesphere.io/v1alpha2/clustermembers/admin/clusterroles
+    header:
+      Authorization: Bearer {{.login.access_token}}
+      Content-Type: application/json
+    method: GET
+- expect:
+    statusCode: 200
+  name: createWorkspacetemplates
+  request:
+    api: /kapis/tenant.kubesphere.io/v1alpha3/workspacetemplates
+    body: |-
+      {
+          "apiVersion": "tenant.kubesphere.io/v1alpha2",
+          "kind": "WorkspaceTemplate",
+          "metadata": {
+              "name": "{{randomKubernetesName}}",
+              "annotations": {
+                  "kubesphere.io/creator": "admin"
+              }
+          },
+          "spec": {
+              "template": {
+                  "spec": {
+                      "manager": "admin"
+                  },
+                  "metadata": {
+                      "annotations": {
+                          "kubesphere.io/creator": "admin"
+                      }
+                  }
+              }
+          }
+      }
+    header:
+      Authorization: Bearer {{.login.access_token}}
+      Content-Type: application/json
+    method: POST
+- expect:
+    statusCode: 200
+  name: createProject
+  request:
+    api: /kapis/tenant.kubesphere.io/v1alpha2/workspaces/{{.createWorkspacetemplates.metadata.name}}/namespaces
+    body: |-
+      {
+          "apiVersion": "v1",
+          "kind": "Namespace",
+          "metadata": {
+              "name": "{{randomKubernetesName}}",
+              "annotations": {
+                  "kubesphere.io/creator": "admin"
+              }
+          }
+      }
+    header:
+      Authorization: Bearer {{.login.access_token}}
+      Content-Type: application/json
+    method: POST
+name: kubesphere
+param:
+  "": ""
+spec: {}

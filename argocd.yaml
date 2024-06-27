@@ -1,0 +1,78 @@
+#!api-testing
+# yaml-language-server: $schema=https://linuxsuren.github.io/api-testing/api-testing-schema.json
+api: https://172.11.0.6:31392/api
+items:
+- expect:
+    statusCode: 200
+  name: webhook
+  request:
+    api: /webhook
+    body: |-
+      {
+          "object_kind": "push",
+          "event_name": "push",
+          "before": "25b6ff4cc89207b8a55a8f9aa6627175f4552dae",
+          "after": "79454fdb6b439c481605110401b02145f09cca8b",
+          "ref": "refs/heads/master",
+          "checkout_sha": "79454fdb6b439c481605110401b02145f09cca8b",
+          "message": null,
+          "user_id": 44,
+          "user_name": "linuxsuren",
+          "user_username": "linuxsuren",
+          "user_email": "",
+          "user_avatar": "http://10.121.218.82:6080/uploads/-/system/user/avatar/44/avatar.png",
+          "project_id": 209,
+          "project": {
+              "id": 209,
+              "name": "ailink-infra",
+              "description": "",
+              "web_url": "http://10.121.218.82:6080/zhaoxiaojie/ailink-infra",
+              "avatar_url": null,
+              "git_ssh_url": "git@10.121.218.82:linuxsuren/ailink-infra.git",
+              "git_http_url": "http://10.121.218.82:6080/linuxsuren/ailink-infra.git",
+              "namespace": "linuxsuren",
+              "visibility_level": 10,
+              "path_with_namespace": "linuxsuren/ailink-infra",
+              "default_branch": "master",
+              "ci_config_path": null,
+              "homepage": "http://10.121.218.82:6080/linuxsuren/ailink-infra",
+              "url": "git@10.121.218.82:linuxsuren/ailink-infra.git",
+              "ssh_url": "git@10.121.218.82:linuxsuren/ailink-infra.git",
+              "http_url": "http://10.121.218.82:6080/linuxsuren/ailink-infra.git"
+          },
+          "commits": [
+              {
+                  "id": "79454fdb6b439c481605110401b02145f09cca8b",
+                  "message": "Update al-cloud-ui.yaml",
+                  "title": "Update al-cloud-ui.yaml",
+                  "timestamp": "2023-10-18T14:53:46+08:00",
+                  "url": "http://10.121.218.82:6080/linuxsuren/ailink-infra/-/commit/79454fdb6b439c481605110401b02145f09cca8b",
+                  "author": {
+                      "name": "linuxsuren",
+                      "email": "linuxsuren@ailinking.com"
+                  },
+                  "added": [],
+                  "modified": [
+                      "al-cloud-ui.yaml"
+                  ],
+                  "removed": []
+              }
+          ],
+          "total_commits_count": 1,
+          "push_options": {},
+          "repository": {
+              "name": "ailink-infra",
+              "url": "git@10.121.218.82:linuxsuren/ailink-infra.git",
+              "description": "",
+              "homepage": "http://10.121.218.82:6080/linuxsuren/ailink-infra",
+              "git_http_url": "http://10.121.218.82:6080/linuxsuren/ailink-infra.git",
+              "git_ssh_url": "git@10.121.218.82:linuxsuren/ailink-infra.git",
+              "visibility_level": 10
+          }
+      }
+    header:
+      Content-Type: application/json
+      X-Gitlab-Event: Push Hook
+    method: POST
+name: argocd
+spec: {}

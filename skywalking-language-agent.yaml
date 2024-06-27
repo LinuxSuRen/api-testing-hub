@@ -1,0 +1,40 @@
+#!api-testing
+# yaml-language-server: $schema=https://linuxsuren.github.io/api-testing/api-testing-schema.json
+api: 172.11.0.6:30689
+items:
+- expect:
+    statusCode: 200
+  name: trace
+  request:
+    api: /skywalking.v3.TraceSegmentReportService/collect
+    body: |-
+      {
+      "traceId": "{{randAlpha 4}}",
+      "traceSegmentId": "{{randAlpha 4}}",
+      "spans": [{
+      "spanId": {{randInt 0 100}},
+      "startTime": {{now.UnixMilli}},
+      "endTime": {{now.UnixMilli}},
+      "operationName": "{{randAlpha 4}}",
+      "spanType": "Entry",
+      "spanLayer": "{{randEnum "Unknown" "Database" "RPCFramework" "Http" "MQ" "Cache" "FAAS"}}",
+      "logs": [{
+          "time": {{now.UnixMilli}},
+          "data": [{
+             "key": "{{randAlpha 4}}",
+             "value": "{{randAlpha 4}}"
+           }]
+         }]
+       }],
+      "service": "atest",
+      "serviceInstance": "{{randAlpha 4}}",
+      "isSizeLimited": false
+      }
+    method: GET
+name: skywalking-language-agent
+spec:
+  kind: gRPC
+  rpc:
+    import:
+    - skywalking-data-collect-protocol-9.6.0
+    protofile: https://gitee.com/linuxsuren/api-testing-hub/releases/download/v0.0.1/skywalking-data-collect-protocol-9.6.0.zip?file=language-agent/Tracing.proto

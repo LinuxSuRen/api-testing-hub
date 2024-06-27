@@ -1,0 +1,51 @@
+#!api-testing
+# yaml-language-server: $schema=https://linuxsuren.github.io/api-testing/api-testing-schema.json
+api: https://podcaster.xiaoyuzhoufm.com/v1
+items:
+- expect:
+    statusCode: 200
+  name: getProfile
+  request:
+    api: /profile/get
+    header:
+      Accept: application/json, text/plain, */*
+      X-Jike-Access-Token: '{{.param.token}}'
+      X-Jike-Refresh-Token: '{{.param.refreshToken}}'
+    method: GET
+- expect:
+    statusCode: 400
+  name: send-code
+  request:
+    api: /auth/send-code
+    body: |-
+      {
+          "areaCode": "+86",
+          "mobilePhoneNumber": "17030623249"
+      }
+    header:
+      Content-Type: application/json
+    method: POST
+- expect:
+    statusCode: 200
+  name: podcastList
+  request:
+    api: /podcast/list
+    header:
+      X-Jike-Access-Token: '{{.param.token}}'
+      X-Jike-Refresh-Token: '{{.param.refereshToken}}'
+    method: POST
+- expect:
+    statusCode: 200
+  name: get-top-episode
+  request:
+    api: /podcast/stats/get-top-episode
+    header:
+      X-Jike-Access-Token: '{{.param.token}}'
+      X-Jike-Refresh-Token: '{{.param.refreshToken}}'
+    method: GET
+name: xiaoyuzhou
+param:
+  "": ""
+  refreshToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiSUtiMGFxZ1JDS1I4TnNFNEtUalQzU21WZWRuVUdmVk1lbThuVmxFV2FGK3htNnZYVG53R0I3Mm9saDYxbDV6THhZRDQ1Y29XS0ZERVA0d0EyeTVFcTFJbDJhaDZDVzdlcGFsazhkVWdmZTlqSlFXYkFpTkl3aExsWWtEV0xWVUJ3YStDaTVWZjQzUUF2Q1gxend4OE1teEViR1lUeUhXVHREc0RpMDA3bjZBK0J1XC9FSVlpYnlLXC95NlJEUTlLNWoiLCJ2IjozLCJpdiI6IlFlTVZBc3hXSUJoazc2U09CeE5Fb1E9PSIsImlhdCI6MTY5NTc4MzA4OS4xNzd9.4R4ttUyqNVfqnI4oaVBDbsLzd62iQXcRDIehBp83ILk
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiU2NDdXZaSGNTRmlrMm9mdEpWVUZ4S3J6VzZrdTVnV1lxY3N4YnN0aVk4RG1TMVRoV1E1T3FFcld5QlVVRG5uMjVVQ2txMlB1VGNRTWhwUitzZEx4Sm12WEMyc2l0Z1VpK3c5ZmlTcUJhSEV4ZFo3Q0lvYzU4TGdcL1ErN0JMRDBYU0xvNlwvSDRFSTZFdGtrVXJMSUJqOVwvOFhiMVcydHE3THVYZ2luZng3aFJjTDRLaTR6dERPdDRcLzJLTklhK3ZWZ2ZrVDNWUytsRmZ4eXhxWnNEUHQ2YWdFdmhId0kxREFXUDg0YkFWUnBGRTFrV3JMZ1E4NlVuWVFEcVZhQmduMUlqbXZ1dmRueHJQY2ZMdjBHTnZoUUR3dW1aSHpkdENuWTZzZFZiNmRiK1E5RzM1OVBHZ1lLM2dcL2R1KzJPVytyZ0FnZDZ1eUw1SktDZUlaelhJOEp0VVFxQzVweGpLbFQyZm0yVjlYOTNQUWhIKytLTExRZGVveUFqbTNcL0ZpM0o0IiwidiI6MywiaXYiOiJaWGdFblB3MG9oWUttQ2pZaGJqb05RPT0iLCJpYXQiOjE2OTU3ODMwODkuMTc3fQ.ylm6MCEB60r2Kgwh33O94q0tkGzj0MFHiJCVB4o4qd4
+spec: {}

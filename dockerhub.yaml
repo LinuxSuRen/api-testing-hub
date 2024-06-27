@@ -1,0 +1,41 @@
+#!api-testing
+# yaml-language-server: $schema=https://linuxsuren.github.io/api-testing/api-testing-schema.json
+api: https://hub.docker.com/v2
+items:
+- expect:
+    statusCode: 200
+  name: updateRepoDesc
+  request:
+    api: /repositories/linuxsuren/api-testing/
+    body: |-
+      {
+          "description": "This is an API testing tool."
+      }
+    header:
+      Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InhYa3BCdDNyV3MyRy11YjlscEpncSJ9.eyJodHRwczovL2h1Yi5kb2NrZXIuY29tIjp7ImVtYWlsIjoiMzYxOTgxMjY5QHFxLmNvbSIsInJvbGVzIjpbXSwic2Vzc2lvbl9pZCI6ImJlNmRhODYyLTIwNGUtNGI5Yi05M2Y0LTI2OWY1OTg5Y2QzMyIsInNvdXJjZSI6ImF1dGgwIiwidXNlcm5hbWUiOiJsaW51eHN1cmVuIiwidXVpZCI6IjQzOGFkNWFlLTQyMjYtNGVhYy1hMzE1LWZhZWMzMzNmMmUxYiJ9LCJpc3MiOiJodHRwczovL2xvZ2luLmRvY2tlci5jb20vIiwic3ViIjoiYXV0aDB8NDM4YWQ1YWUtNDIyNi00ZWFjLWEzMTUtZmFlYzMzM2YyZTFiIiwiYXVkIjpbImh0dHBzOi8vaHViLmRvY2tlci5jb20iLCJodHRwczovL2RvY2tlci1wcm9kLnVzLmF1dGgwLmNvbS91c2VyaW5mbyJdLCJpYXQiOjE2OTM0NjgxMTMsImV4cCI6MTY5MzQ3MTcxMywiYXpwIjoibHZlOUdHbDhKdFNVcm5lUTFFVnVDMGxiakhkaTluYjkiLCJzY29wZSI6Im9wZW5pZCBwcm9maWxlIGVtYWlsIG9mZmxpbmVfYWNjZXNzIn0.Lod9FHOKeQKljXnhQOxD4TRl_VjzgCi56gnpZwjXRgS7BTWYA-mrMCJMh0UOzn0oJKk5Xx-Eg2V9GKykGG7P_k3FaXXI7ybswLNPrxJYJ2Ay9MgAyBP4M5tM2-8L-7ahlv_qeFfsJZxatgWl4A3Rkuafj2hwkn9PGlZuYR646B4Be_-8XmdE0XXJ8hGa1CIqK7bKyGj7Hn1D_FBwPV5Qf7yB9LDf96UXVfM65j8wgjIwuA7xLe6GwBxXdDuXuCIdJSopxZ7IDehwZhpqkkWc-BRBhIoLhaLWK4KV6OTCihETI6ooAbgjH6lSIwR3cF6iWPLi3NDxD1j7PfKFveSLHQ
+      Content-Type: application/json
+    method: PATCH
+- expect:
+    statusCode: 200
+  name: login
+  request:
+    api: /users/login
+    body: |-
+      {
+          "username": "linuxsuren",
+          "password": "{{secretValue "dockerhub.pass"}}"
+      }
+    header:
+      Content-Type: application/json
+    method: POST
+- expect:
+    statusCode: 200
+  name: tags
+  request:
+    api: /repositories/linuxsuren/api-testing/tags
+    method: GET
+    query:
+      page: "1"
+      page_size: "1"
+name: dockerhub
+spec: {}

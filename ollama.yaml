@@ -1,0 +1,51 @@
+name: ollama
+api: http://ollama.dev-center.jenkins-zh.cn/api
+items:
+  - name: git-commit-message
+    request:
+      api: /generate
+      method: POST
+      body: |-
+        {
+          "model": "llama3",
+          "stream": false,
+          "prompt":"Why is the sky blue?"
+        }
+    expect:
+      statusCode: 200
+  - name: listModels
+    request:
+      api: /tags
+      method: GET
+    expect:
+      statusCode: 200
+  - name: chat
+    request:
+      api: /chat
+      method: POST
+      body: |-
+        {
+          "model": "llama3",
+          "stream": false,
+          "messages": [
+            {
+              "role": "user",
+              "content": "why is the sky blue?"
+            }
+          ]
+        }
+    expect:
+      statusCode: 200
+  - name: pullModel
+    request:
+      api: /pull
+      method: POST
+      header:
+        Content-Type: application/json
+      body: |-
+        {
+        "name": "mistral",
+        "stream": false
+        }
+    expect:
+      statusCode: 200
